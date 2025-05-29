@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+        "target": "es2019",
+        "lib": ["es2019", "es2020", "es2022.error"],
+		"module": "commonjs",
+        "removeComments": true,
+        "useUnknownInCatchVariables": false,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "strictNullChecks": true,
+        "preserveConstEnums": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "incremental": true,
+        "declaration": true,
+        "skipLibCheck": true,
+		"outDir": "./dist/",
+		"rootDir": "./",
+		"sourceMap": true
+	},
+	"include": [
+		"credentials/**/*",
+		"src/**/*",
+		"nodes/**/*",
+		"test/**/*"
+	],
+	"exclude": [
+		"**/*.spec.ts"
+	]
+}
