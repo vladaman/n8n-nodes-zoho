@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "author": "Vladimir Vlach``",
   "license": "GPL-3.0",
-  "description": "Zoho universal support for n8n",
+  "description": "Zoho support for n8n",
   "keywords": [
     "n8n",
     "nodemation",
@@ -38,7 +38,9 @@
       "dist/credentials/ZohoApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/Zoho/Zoho.node.js"
+      "dist/nodes/Zoho/ZohoSheets.node.js",
+      "dist/nodes/Zoho/ZohoBilling.node.js",
+      "dist/nodes/Zoho/ZohoTasks.node.js"
     ]
   },
   "devDependencies": {

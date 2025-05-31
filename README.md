@@ -4,13 +4,20 @@
 [![GitHub issues](https://img.shields.io/github/issues/vladaman/n8n-nodes-zoho)](https://github.com/vladaman/n8n-nodes-zoho/issues)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://opensource.org/licenses/GPL-3.0)
 
-> Universal Zoho credentials integration for n8n workflows.
+> Zoho API credentials and custom nodes for n8n workflows.
 
 ## Features
 
 - OAuth2 credential type for Zoho API (`Zoho API`)
+- Custom nodes for Zoho Sheets, Zoho Tasks, and Zoho Billing (Subscriptions)
 - Supports multiple Zoho regional domains (US, EU, IN, AU, CN)
 - Automatic token refresh via n8n's built-in OAuth2 support
+
+## Nodes
+
+- **Zoho Sheets**: create and manage spreadsheets (create workbooks, list workbooks, add records to worksheets).
+- **Zoho Tasks**: manage tasks and projects via Zoho Tasks API (add, list, get, update, delete tasks and projects).
+- **Zoho Billing**: interact with Zoho Subscriptions API for billing data (custom GET/POST/PUT/DELETE operations).
 
 ## Installation
 
@@ -27,13 +34,15 @@ npm install
 npm run build
 ```
 
-After installation, restart n8n to load the new credential type.
+After installation, restart n8n to load the new credential type and nodes.
 
 ## Usage
 
+### 1. Set up Zoho API credentials
+
 1. In n8n, go to **Settings > API Credentials**.
 2. Click **New Credentials** and select **Zoho API**.
-3. Provide your Zoho **Client ID** and **Client Secret**, then choose the appropriate regional endpoints:
+3. Enter your Zoho **Client ID** and **Client Secret**, then choose the appropriate regional endpoints:
 
    | Setting               | Option                                      |
    | --------------------- | ------------------------------------------- |
@@ -44,16 +53,28 @@ After installation, restart n8n to load the new credential type.
 
 4. Click **Connect** and complete the OAuth2 flow in your browser.
 
-Once configured, select **Zoho API** credentials in any node that supports OAuth2 (for example, the **HTTP Request** node) to interact with Zoho endpoints.
+### 2. Use the Zoho nodes in your workflow
 
-### Example: Fetching CRM Leads
+After installing and configuring your Zoho API credentials, add any of the provided Zoho nodes to your workflow and select your **Zoho API** credential.
 
-Configure an **HTTP Request** node:
+#### Example: Create a new Zoho Sheets workbook
 
-- **Authentication**: OAuth2
-- **OAuth2 Credential**: Zoho API
-- **Method**: GET
-- **URL**: `https://www.zohoapis.com/crm/v2/Leads`
+1. Add a **Zoho Sheets** node.
+2. Set **Operation** to **Create Workbook**.
+3. Enter the desired **Workbook Name**.
+4. Execute the workflow to receive the new workbook's details.
+
+#### Example: List your Zoho Tasks
+
+1. Add a **Zoho Tasks** node.
+2. Set **Operation** to **Get All Personal Tasks** (or another desired operation).
+3. Execute the workflow to retrieve your tasks.
+
+#### Example: Call Zoho Billing API
+
+1. Add a **Zoho Billing** node.
+2. Specify your **Organization ID**, HTTP **Method**, and **Path** (e.g., `/api/v1/customers`).
+3. Execute the workflow to interact with the Zoho Subscriptions API.
 
 ## Development
 

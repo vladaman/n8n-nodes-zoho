@@ -67,13 +67,13 @@ export class ZohoApi implements ICredentialType {
 		{
 			displayName: 'Scope',
 			name: 'scope',
-			type: 'options',
-			default: 'ZohoCRM.modules.ALL,ZohoCRM.settings.all,ZohoCRM.users.all,ZohoSubscriptions.fullaccess.ALL,ZohoSheet.dataAPI.ALL,ZohoSheet.dataAPI.READ,ZohoMail.tasks.ALL,WorkDrive.files.ALL,ZohoMail.accounts.READ',
+			type: 'string',
+			default: 'ZohoCRM.modules.ALL,ZohoCRM.settings.all,ZohoCRM.users.all,ZohoSubscriptions.fullaccess.ALL,ZohoSheet.dataAPI.ALL,ZohoMail.tasks.ALL,WorkDrive.files.ALL,ZohoMail.accounts.READ',
 		},
 		{
 			displayName: 'Auth URI Query Parameters',
 			name: 'authQueryParameters',
-			type: 'options',
+			type: 'string',
 			default: 'access_type=offline',
 		},
 		{
