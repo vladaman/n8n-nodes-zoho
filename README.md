@@ -40,8 +40,8 @@ After installation, restart n8n to load the new credential type and nodes.
 
 ### 1. Set up Zoho API credentials
 
-1. In n8n, go to **Settings > API Credentials**.
-2. Click **New Credentials** and select **Zoho API**.
+1. In n8n, go to **Create Credential**.
+2. Select **Zoho API**.
 3. Enter your Zoho **Client ID** and **Client Secret**, then choose the appropriate regional endpoints:
 
    | Setting               | Option                                      |
@@ -64,6 +64,20 @@ After installing and configuring your Zoho API credentials, add any of the provi
 3. Enter the desired **Workbook Name**.
 4. Execute the workflow to receive the new workbook's details.
 
+#### Example: List Zoho Sheets workbooks
+
+1. Add a **Zoho Sheets** node.
+2. Set **Operation** to **List Workbooks**.
+3. (Optional) Specify **Start Index**, **Count**, or **Sort Option**.
+4. Execute the workflow to retrieve the list of workbooks.
+
+#### Example: Add records to a Zoho Sheets worksheet
+
+1. Add a **Zoho Sheets** node.
+2. Set **Operation** to **Add Records to Worksheet**.
+3. Enter the **Workbook Resource ID**, **Worksheet Name** or **Worksheet ID**, **Header Row**, and **JSON Data** (JSON array string).
+4. Execute the workflow to add records to the worksheet.
+
 #### Example: List your Zoho Tasks
 
 1. Add a **Zoho Tasks** node.
@@ -73,7 +87,7 @@ After installing and configuring your Zoho API credentials, add any of the provi
 #### Example: Call Zoho Billing API
 
 1. Add a **Zoho Billing** node.
-2. Specify your **Organization ID**, HTTP **Method**, and **Path** (e.g., `/api/v1/customers`).
+2. Specify your **Organization ID**, HTTP **Method**, **Path** (e.g., `/api/v1/customers`), and optionally **Query Parameters** and **Body Parameters** (as valid JSON).
 3. Execute the workflow to interact with the Zoho Subscriptions API.
 
 ## Development
@@ -98,3 +112,7 @@ https://github.com/vladaman/n8n-nodes-zoho/issues
 ## License
 
 This project is licensed under the [GPL-3.0 License](https://opensource.org/licenses/GPL-3.0).
+
+## Credits
+
+Special thanks to OpenAI and the Codex CLI tool for helping build this n8n node.

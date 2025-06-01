@@ -1,11 +1,11 @@
 
 import {
-	type IExecuteFunctions,
-	type IDataObject,
-	type INodeExecutionData,
-	type INodeType,
-	type INodeTypeDescription,
-	NodeConnectionType,
+   type IExecuteFunctions,
+   type IDataObject,
+   type INodeExecutionData,
+   type INodeType,
+   type INodeTypeDescription,
+   NodeConnectionType
 } from 'n8n-workflow';
 
 import { zohoApiRequest } from './GenericFunctions';
@@ -280,6 +280,12 @@ export class ZohoTasks implements INodeType {
 			}
 		}
 
-		return [this.helpers.returnJsonArray(returnData)];
+		// Parse any raw JSON string responses into objects
+		const parsedData = returnData.map(item =>
+			typeof item === 'string'
+				? JSON.parse(item)
+				: (item as IDataObject),
+		) as IDataObject[];
+		return [this.helpers.returnJsonArray(parsedData)];
 	}
 }

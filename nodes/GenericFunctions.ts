@@ -58,7 +58,6 @@ async function getAccessTokenData(
         refresh_token = tokenResponse.refresh_token || refresh_token;
         api_domain = tokenResponse.api_domain;
         expires_in = tokenResponse.expires_in;
-        // expires_at = new Date(tokenResponse.expires_in * 1000);
     } else {
         // console.log('Getting cached token');
     }
@@ -135,36 +134,13 @@ export async function zohoSubscriptionsApiRequest(
     if (Object.keys(body).length) {
         options.body = body;
     }
+    console.log(options);
     try {
         const responseData = await this.helpers.request!(options);
+        console.log(responseData);
         return responseData;
     } catch (error) {
         throw new NodeApiError(this.getNode(), error as JsonObject);
     }
 }
 
-/**
- * Make an authenticated API request to Zoho CRM API and return all items.
- */
-export async function zohoApiRequestAllItems(
-    this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions,
-    method: IHttpRequestMethods,
-    endpoint: string,
-    body: IDataObject = {},
-    qs: IDataObject = {},
-) {
-    const returnData: IDataObject[] = [];
-
-    let responseData;
-    qs.per_page = 200;
-    qs.page = 1;
-
-    do {
-        responseData = await zohoApiRequest.call(this, method, endpoint, body, qs);
-        if (Array.isArray(responseData) && !responseData.length) return returnData;
-        returnData.push(...(responseData.data as IDataObject[]));
-        qs.page++;
-    } while (responseData.info.more_records !== undefined && responseData.info.more_records === true);
-
-    return returnData;
-}
