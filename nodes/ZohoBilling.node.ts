@@ -55,7 +55,7 @@ export class ZohoBilling implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 displayOptions: {
-                show: { resource: ['product'] },
+                    show: { resource: ['product'] },
                 },
                 options: [
                     { name: 'List', value: 'listProducts', description: 'List all products' },
@@ -72,7 +72,7 @@ export class ZohoBilling implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 displayOptions: {
-                show: { resource: ['plan'] },
+                    show: { resource: ['plan'] },
                 },
                 options: [
                     { name: 'List', value: 'listPlans', description: 'List all plans' },
@@ -89,7 +89,7 @@ export class ZohoBilling implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 displayOptions: {
-                show: { resource: ['addon'] },
+                    show: { resource: ['addon'] },
                 },
                 options: [
                     { name: 'List', value: 'listAddons', description: 'List all add-ons' },
@@ -106,7 +106,7 @@ export class ZohoBilling implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 displayOptions: {
-                show: { resource: ['subscription'] },
+                    show: { resource: ['subscription'] },
                 },
                 options: [
                     { name: 'List', value: 'listSubscriptions', description: 'List all subscriptions' },
@@ -123,7 +123,7 @@ export class ZohoBilling implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 displayOptions: {
-                show: { resource: ['invoice'] },
+                    show: { resource: ['invoice'] },
                 },
                 options: [
                     { name: 'List', value: 'listInvoices', description: 'List all invoices' },
@@ -140,7 +140,7 @@ export class ZohoBilling implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 displayOptions: {
-                show: { resource: ['payment'] },
+                    show: { resource: ['payment'] },
                 },
                 options: [
                     { name: 'List', value: 'listPayments', description: 'List all payments' },
@@ -185,7 +185,7 @@ export class ZohoBilling implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 displayOptions: {
-                show: { resource: ['event'] },
+                    show: { resource: ['event'] },
                 },
                 options: [
                     { name: 'List', value: 'listEvents', description: 'List all events' },
@@ -199,7 +199,7 @@ export class ZohoBilling implements INodeType {
                 type: 'options',
                 noDataExpression: true,
                 displayOptions: {
-                show: { resource: ['item'] },
+                    show: { resource: ['item'] },
                 },
                 options: [
                     { name: 'List', value: 'listItems', description: 'List all items' },
@@ -413,7 +413,7 @@ export class ZohoBilling implements INodeType {
             {
                 displayName: 'JSON Data',
                 name: 'jsonData',
-                type: 'string',
+                type: 'json',
                 default: '',
                 required: true,
                 displayOptions: {
@@ -474,7 +474,7 @@ export class ZohoBilling implements INodeType {
                     { name: 'Void', value: 'Void' },
                     { name: 'Unpaid', value: 'Unpaid' },
                 ],
-                default: '',
+                default: 'All',
                 displayOptions: {
                     show: {
                         resource: ['invoice'],
@@ -487,181 +487,181 @@ export class ZohoBilling implements INodeType {
     };
 
     async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const baseURL = 'https://subscriptions.zoho.eu/api/v1';
-
-	const items = this.getInputData();
-	const returnData: IDataObject[] = [];
-	for (let i = 0; i < items.length; i++) {
-		const operation = this.getNodeParameter('operation', i) as string;
-		const orgId = this.getNodeParameter('organizationId', i) as string;
-		if (operation === 'listProducts') {
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/products`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listPlans') {
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/plans`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listAddons') {
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/addons`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listInvoices') {
-			const subscriptionId = this.getNodeParameter('subscriptionId', i) as string;
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const filterBy = this.getNodeParameter('filterBy', i) as string;
-			const qs: IDataObject = {};
-			if (subscriptionId) {
-				qs.subscription_id = subscriptionId;
-			}
-			if (customerId) {
-				qs.customer_id = customerId;
-			}
-			if (filterBy) {
-				qs.filter_by = filterBy;
-			}
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/invoices`, {}, qs, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listSubscriptions') {
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/subscriptions`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'getInvoice') {
-			const invoiceId = this.getNodeParameter('invoiceId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/invoices/${invoiceId}`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'createInvoice') {
-			const jsonData = this.getNodeParameter('jsonData', i) as string;
-			let body: IDataObject;
-			try {
-				body = JSON.parse(jsonData) as IDataObject;
-			} catch {
-				throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
-			}
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/invoices`, body, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'createPayment') {
-			const jsonData = this.getNodeParameter('jsonData', i) as string;
-			let body: IDataObject;
-			try {
-				body = JSON.parse(jsonData) as IDataObject;
-			} catch {
-				throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
-			}
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/payments`, body, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'getPayment') {
-			const paymentId = this.getNodeParameter('paymentId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/payments/${paymentId}`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listEvents') {
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/events`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listItems') {
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/items`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'getCustomerByReference') {
-			const referenceId = this.getNodeParameter('referenceId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers/reference/${referenceId}`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listCustomers') {
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'getCustomer') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers/${customerId}`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'getUnusedCredits') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers/${customerId}/unusedcredits`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listTransactions') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const qs: IDataObject = { customer_id: customerId };
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/transactions`, {}, qs, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'listCustomerComments') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers/${customerId}/comments`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'createCustomer') {
-			const jsonData = this.getNodeParameter('jsonData', i) as string;
-			let body: IDataObject;
-			try {
-				body = JSON.parse(jsonData) as IDataObject;
-			} catch {
-				throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
-			}
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers`, body, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'enableAllReminders') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/${customerId}/paymentreminder/enable`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'stopAllReminders') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/${customerId}/paymentreminder/disable`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'markCustomerAsActive') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/${customerId}/markasactive`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'markCustomerAsInactive') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/${customerId}/markasinactive`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'bulkMarkCustomersAsActive') {
-			const customerIds = this.getNodeParameter('customerIds', i) as string;
-			const qs: IDataObject = { customer_ids: customerIds };
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/markasactive`, {}, qs, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'bulkMarkCustomersAsInactive') {
-			const customerIds = this.getNodeParameter('customerIds', i) as string;
-			const qs: IDataObject = { customer_ids: customerIds };
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/markasinactive`, {}, qs, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'updateCustomer') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const jsonData = this.getNodeParameter('jsonData', i) as string;
-			let body: IDataObject;
-			try {
-				body = JSON.parse(jsonData) as IDataObject;
-			} catch {
-				throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
-			}
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'PUT', `${baseURL}/customers/${customerId}`, body, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'deleteCustomerComment') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const commentId = this.getNodeParameter('commentId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'DELETE', `${baseURL}/customers/${customerId}/comments/${commentId}`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'deleteCustomerAddress') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const addressId = this.getNodeParameter('addressId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'DELETE', `${baseURL}/customers/${customerId}/address/${addressId}`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'deleteCustomer') {
-			const customerId = this.getNodeParameter('customerId', i) as string;
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'DELETE', `${baseURL}/customers/${customerId}`, {}, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'bulkDeleteCustomers') {
-			const customerIds = this.getNodeParameter('customerIds', i) as string;
-			const qs: IDataObject = { customer_ids: customerIds };
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'DELETE', `${baseURL}/customers`, {}, qs, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		} else if (operation === 'updateInvoice') {
-			const invoiceId = this.getNodeParameter('invoiceId', i) as string;
-			const jsonData = this.getNodeParameter('jsonData', i) as string;
-			let body: IDataObject;
-			try {
-				body = JSON.parse(jsonData) as IDataObject;
-			} catch {
-				throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
-			}
-			const responseData = await zohoSubscriptionsApiRequest.call(this, 'PUT', `${baseURL}/invoices/${invoiceId}`, body, {}, orgId);
-			returnData.push({ json: responseData as IDataObject });
-		}else{
-            console.error(`Unhandled operation ${operation}`); // shows list
+        const baseURL = 'https://www.zohoapis.eu/billing/v1';
+console.log('execute');
+        const items = this.getInputData();
+        const returnData: IDataObject[] = [];
+        for (let i = 0; i < items.length; i++) {
+            const operation = this.getNodeParameter('operation', i) as string;
+            const orgId = this.getNodeParameter('organizationId', i) as string;
+            if (operation === 'listProducts') { // <-- Correctly checks for 'listProducts'
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/products`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listPlans') {
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/plans`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listAddons') {
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/addons`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listInvoices') {
+                const subscriptionId = this.getNodeParameter('subscriptionId', i) as string;
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const filterBy = this.getNodeParameter('filterBy', i) as string;
+                const qs: IDataObject = {};
+                if (subscriptionId) {
+                    qs.subscription_id = subscriptionId;
+                }
+                if (customerId) {
+                    qs.customer_id = customerId;
+                }
+                if (filterBy && filterBy !== 'All') {
+                    qs.filter_by = filterBy;
+                }
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/invoices`, {}, qs, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listSubscriptions') {
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/subscriptions`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'getInvoice') {
+                const invoiceId = this.getNodeParameter('invoiceId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/invoices/${invoiceId}`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'createInvoice') {
+                const jsonData = this.getNodeParameter('jsonData', i) as string;
+                let body: IDataObject;
+                try {
+                    body = JSON.parse(jsonData) as IDataObject;
+                } catch {
+                    throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
+                }
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/invoices`, body, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'createPayment') {
+                const jsonData = this.getNodeParameter('jsonData', i) as string;
+                let body: IDataObject;
+                try {
+                    body = JSON.parse(jsonData) as IDataObject;
+                } catch {
+                    throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
+                }
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/payments`, body, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'getPayment') {
+                const paymentId = this.getNodeParameter('paymentId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/payments/${paymentId}`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listEvents') {
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/events`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listItems') {
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/items`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'getCustomerByReference') {
+                const referenceId = this.getNodeParameter('referenceId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers/reference/${referenceId}`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listCustomers') {
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'getCustomer') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers/${customerId}`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'getUnusedCredits') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers/${customerId}/unusedcredits`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listTransactions') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const qs: IDataObject = { customer_id: customerId };
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/transactions`, {}, qs, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'listCustomerComments') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers/${customerId}/comments`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'createCustomer') {
+                const jsonData = this.getNodeParameter('jsonData', i) as string;
+                let body: IDataObject;
+                try {
+                    body = JSON.parse(jsonData) as IDataObject;
+                } catch {
+                    throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
+                }
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers`, body, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'enableAllReminders') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/${customerId}/paymentreminder/enable`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'stopAllReminders') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/${customerId}/paymentreminder/disable`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'markCustomerAsActive') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/${customerId}/markasactive`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'markCustomerAsInactive') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/${customerId}/markasinactive`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'bulkMarkCustomersAsActive') {
+                const customerIds = this.getNodeParameter('customerIds', i) as string;
+                const qs: IDataObject = { customer_ids: customerIds };
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/markasactive`, {}, qs, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'bulkMarkCustomersAsInactive') {
+                const customerIds = this.getNodeParameter('customerIds', i) as string;
+                const qs: IDataObject = { customer_ids: customerIds };
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'POST', `${baseURL}/customers/markasinactive`, {}, qs, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'updateCustomer') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const jsonData = this.getNodeParameter('jsonData', i) as string;
+                let body: IDataObject;
+                try {
+                    body = JSON.parse(jsonData) as IDataObject;
+                } catch {
+                    throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
+                }
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'PUT', `${baseURL}/customers/${customerId}`, body, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'deleteCustomerComment') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const commentId = this.getNodeParameter('commentId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'DELETE', `${baseURL}/customers/${customerId}/comments/${commentId}`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'deleteCustomerAddress') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const addressId = this.getNodeParameter('addressId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'DELETE', `${baseURL}/customers/${customerId}/address/${addressId}`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'deleteCustomer') {
+                const customerId = this.getNodeParameter('customerId', i) as string;
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'DELETE', `${baseURL}/customers/${customerId}`, {}, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'bulkDeleteCustomers') {
+                const customerIds = this.getNodeParameter('customerIds', i) as string;
+                const qs: IDataObject = { customer_ids: customerIds };
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'DELETE', `${baseURL}/customers`, {}, qs, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else if (operation === 'updateInvoice') {
+                const invoiceId = this.getNodeParameter('invoiceId', i) as string;
+                const jsonData = this.getNodeParameter('jsonData', i) as string;
+                let body: IDataObject;
+                try {
+                    body = JSON.parse(jsonData) as IDataObject;
+                } catch {
+                    throw new NodeOperationError(this.getNode(), 'JSON Data must be valid JSON');
+                }
+                const responseData = await zohoSubscriptionsApiRequest.call(this, 'PUT', `${baseURL}/invoices/${invoiceId}`, body, {}, orgId);
+                returnData.push({ json: responseData as IDataObject });
+            } else {
+                console.error(`Unhandled operation ${operation}`); // shows list
+            }
         }
-	}
 
-	return [this.helpers.returnJsonArray(returnData)];
+        return [this.helpers.returnJsonArray(returnData)];
     }
 }

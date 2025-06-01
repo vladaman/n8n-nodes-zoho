@@ -68,7 +68,7 @@ export class ZohoApi implements ICredentialType {
 			displayName: 'Scope',
 			name: 'scope',
 			type: 'string',
-			default: 'ZohoCRM.modules.ALL,ZohoCRM.settings.all,ZohoCRM.users.all,ZohoSubscriptions.fullaccess.ALL,ZohoSheet.dataAPI.ALL,ZohoMail.tasks.ALL,WorkDrive.files.ALL,ZohoMail.accounts.READ',
+			default: 'ZohoCRM.modules.ALL,ZohoCRM.settings.all,ZohoCRM.users.all,ZohoSubscriptions.fullaccess.ALL,ZohoSheet.dataAPI.ALL,ZohoMail.tasks.ALL,WorkDrive.files.ALL,ZohoMail.accounts.READ,ZohoMail.messages.ALL',
 		},
 		{
 			displayName: 'Auth URI Query Parameters',

@@ -40,7 +40,8 @@
     "nodes": [
       "dist/nodes/Zoho/ZohoSheets.node.js",
       "dist/nodes/Zoho/ZohoBilling.node.js",
-      "dist/nodes/Zoho/ZohoTasks.node.js"
+      "dist/nodes/Zoho/ZohoTasks.node.js",
+      "dist/nodes/Zoho/ZohoEmail.node.js"
     ]
   },
   "devDependencies": {
