@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-zoho",
-  "version": "1.0.1",
-  "author": "Vladimir Vlach``",
+  "version": "1.0.2",
+  "author": "Vladimir Vlach",
   "license": "GPL-3.0",
   "description": "Zoho support for n8n",
   "keywords": [

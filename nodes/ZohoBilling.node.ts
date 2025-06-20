@@ -296,6 +296,118 @@ export class ZohoBilling implements INodeType {
                 description: 'ID of the subscription',
             },
             {
+                displayName: 'Filters',
+                name: 'filters',
+                type: 'fixedCollection',
+                default: { filter: [] },
+                typeOptions: {
+                    multipleValues: true,
+                },
+                placeholder: 'Add Filter',
+                displayOptions: {
+                    show: {
+                        resource: ['subscription'],
+                        operation: ['listSubscriptions'],
+                    },
+                },
+                options: [
+                    {
+                        displayName: 'Filter',
+                        name: 'filter',
+                            values: [
+                                {
+                                    displayName: 'Field Name',
+                                    name: 'filterBy',
+                                    type: 'options',
+                                    options: [
+                                        { name: 'Search Text',                  value: 'search_text' },
+                                        { name: 'Subscription Number Contains', value: 'subscription_number_contains' },
+                                        { name: 'Reference Contains',           value: 'reference_contains' },
+                                        { name: 'Subscription Status',          value: 'filter_by' },
+                                    ],
+                                    default: 'search_text',
+                                    description: 'Field to filter by',
+                                },
+                                {
+                                    displayName: 'Value',
+                                    name: 'filterValue',
+                                    type: 'string',
+                                    default: '',
+                                    description: 'Value to filter the selected field by',
+                                    displayOptions: {
+                                        show: {
+                                            filterBy: [
+                                                'search_text',
+                                                'subscription_number_contains',
+                                                'reference_contains',
+                                            ],
+                                        },
+                                    },
+                                },
+                                {
+                                    displayName: 'Subscription Status',
+                                    name: 'filterValue',
+                                    type: 'options',
+                                    options: [
+                                        { name: 'All',                      value: 'SubscriptionStatus.All' },
+                                        { name: 'In Progress',              value: 'SubscriptionStatus.IN_PROGRESS' },
+                                        { name: 'Trial',                    value: 'SubscriptionStatus.TRIAL' },
+                                        { name: 'Future',                   value: 'SubscriptionStatus.FUTURE' },
+                                        { name: 'Live',                     value: 'SubscriptionStatus.LIVE' },
+                                        { name: 'Unpaid',                   value: 'SubscriptionStatus.UNPAID' },
+                                        { name: 'Past Due',                 value: 'SubscriptionStatus.PAST_DUE' },
+                                        { name: 'Non‑Renewing',             value: 'SubscriptionStatus.NON_RENEWING' },
+                                        { name: 'Cancelled',                value: 'SubscriptionStatus.CANCELLED' },
+                                        { name: 'Cancelled From Dunning',   value: 'SubscriptionStatus.CANCELLED_FROM_DUNNING' },
+                                        { name: 'Expired',                  value: 'SubscriptionStatus.EXPIRED' },
+                                        { name: 'Creation Failed',          value: 'SubscriptionStatus.CREATION_FAILED' },
+                                        { name: 'Trial Expired',            value: 'SubscriptionStatus.TRIAL_EXPIRED' },
+                                        { name: 'Cancelled This Month',     value: 'SubscriptionStatus.CANCELLED_THIS_MONTH' },
+                                        { name: 'Cancelled Last Month',     value: 'SubscriptionStatus.CANCELLED_LAST_MONTH' },
+                                        { name: 'Paused',                   value: 'SubscriptionStatus.PAUSED' },
+                                        { name: 'Having Unbilled',          value: 'SubscriptionStatus.HAVING_UNBILLED' },
+                                    ],
+                                    default: 'All',
+                                    description: 'Subscription status to filter by',
+                                    displayOptions: {
+                                        show: {
+                                            filterBy: ['filter_by'],
+                                        },
+                                    },
+                                },
+                            ],
+                    },
+                ],
+            },
+            {
+                displayName: 'Page',
+                name: 'page',
+                type: 'number',
+                typeOptions: { minValue: 1 },
+                default: 1,
+                description: 'Page number to retrieve',
+                displayOptions: {
+                    show: {
+                        resource: ['subscription'],
+                        operation: ['listSubscriptions'],
+                    },
+                },
+            },
+            {
+                displayName: 'Per Page',
+                name: 'perPage',
+                type: 'number',
+                typeOptions: { minValue: 1, maxValue: 200 },
+                default: 200,
+                description: 'Number of records per page',
+                displayOptions: {
+                    show: {
+                        resource: ['subscription'],
+                        operation: ['listSubscriptions'],
+                    },
+                },
+            },
+            {
                 displayName: 'Invoice ID',
                 name: 'invoiceId',
                 type: 'string',
@@ -344,6 +456,32 @@ export class ZohoBilling implements INodeType {
                 typeOptions: { minValue: 1, maxValue: 200 },
                 default: 200,
                 description: 'Number of records per page',
+                displayOptions: {
+                    show: {
+                        resource: ['customer'],
+                        operation: ['listCustomers'],
+                    },
+                },
+            },
+            {
+                displayName: 'Custom Field ID',
+                name: 'customFieldId',
+                type: 'string',
+                default: '',
+                description: 'Custom field number to filter by (e.g. 789785000000088591)',
+                displayOptions: {
+                    show: {
+                        resource: ['customer'],
+                        operation: ['listCustomers'],
+                    },
+                },
+            },
+            {
+                displayName: 'Custom Field Contains',
+                name: 'customFieldContains',
+                type: 'string',
+                default: '',
+                description: 'Only return customers whose custom field contains this value',
                 displayOptions: {
                     show: {
                         resource: ['customer'],
@@ -738,11 +876,39 @@ export class ZohoBilling implements INodeType {
                 if (perPage) {
                     qs.per_page = perPage;
                 }
+
                 const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/invoices`, {}, qs, orgId);
                 returnData.push({json: responseData as IDataObject});
             } else if (operation === 'listSubscriptions') {
-                const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/subscriptions`, {}, {}, orgId);
-                returnData.push({json: responseData as IDataObject});
+                // build optional filters and paging parameters
+                const filters = this.getNodeParameter('filters', i, { filter: [] }) as {
+                    filter?: Array<{ filterBy: string; filterValue: string }>;
+                };
+                const page    = this.getNodeParameter('page',    i) as number;
+                const perPage = this.getNodeParameter('perPage', i) as number;
+                const qs: IDataObject = {};
+                if (filters.filter) {
+                    for (const f of filters.filter) {
+                        if (f.filterValue) {
+                            qs[f.filterBy] = f.filterValue;
+                        }
+                    }
+                }
+                if (page) {
+                    qs.page = page;
+                }
+                if (perPage) {
+                    qs.per_page = perPage;
+                }
+                const responseData = await zohoSubscriptionsApiRequest.call(
+                    this,
+                    'GET',
+                    `${baseURL}/subscriptions`,
+                    {},
+                    qs,
+                    orgId,
+                );
+                returnData.push({ json: responseData as IDataObject });
             } else if (operation === 'getSubscription') {
                 const subscriptionId = this.getNodeParameter('subscriptionId', i) as string;
                 const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/subscriptions/${subscriptionId}`, {}, {}, orgId);
@@ -848,6 +1014,13 @@ export class ZohoBilling implements INodeType {
                 if (perPage) {
                     qs.per_page = perPage;
                 }
+
+                const customFieldId = this.getNodeParameter('customFieldId', i) as string;
+                const customFieldContains = this.getNodeParameter('customFieldContains', i) as string;
+                if (customFieldId && customFieldContains) {
+                    qs[`custom_field_${customFieldId}_contains`] = customFieldContains;
+                }
+
                 const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers`, {}, qs, orgId);
                 returnData.push({json: responseData as IDataObject});
             } else if (operation === 'getCustomer') {

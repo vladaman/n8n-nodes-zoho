@@ -184,6 +184,21 @@ JSON Data: '{"reminder_datetime":"2024-01-30T09:00:00Z","reminder_type":"email"}
 Operation: "List"
 Resource: "Customer"
 Organization ID: "your_org_id"
+Custom Field ID: "789785000000088591"
+Custom Field Contains: "some substring"
+
+// List Subscriptions (with optional search and paging)
+Operation: "List"
+Resource: "Subscription"
+Organization ID: "your_org_id"
+Filters: [
+  { filterBy: 'search_text',                  filterValue: 'widget'   },
+  { filterBy: 'subscription_number_contains', filterValue: 'sub_1234' },
+  { filterBy: 'reference_contains',           filterValue: 'ref_5678' },
+  { filterBy: 'filter_by',                    filterValue: 'UNPAID'   },
+]
+Page: 2
+Per Page: 50
 
 // Create Subscription
 Operation: "Create"
