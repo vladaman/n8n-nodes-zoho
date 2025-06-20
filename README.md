@@ -184,8 +184,13 @@ JSON Data: '{"reminder_datetime":"2024-01-30T09:00:00Z","reminder_type":"email"}
 Operation: "List"
 Resource: "Customer"
 Organization ID: "your_org_id"
-Custom Field ID: "789785000000088591"
-Custom Field Contains: "some substring"
+Status Filter:
+  Status: ["Status.Active"]
+Filters: [
+  { filterBy: 'contact_number_contains', filterValue: '12345' },
+  { filterBy: 'email_contains',           filterValue: 'foo@bar.com' },
+  { filterBy: 'custom_field', customFieldId: '789785000000088591', filterValue: 'some substring' },
+]
 
 // List Subscriptions (with optional search and paging)
 Operation: "List"
