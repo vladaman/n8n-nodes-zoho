@@ -464,32 +464,6 @@ export class ZohoBilling implements INodeType {
                 },
             },
             {
-                displayName: 'Custom Field ID',
-                name: 'customFieldId',
-                type: 'string',
-                default: '',
-                description: 'Custom field number to filter by (e.g. 789785000000088591)',
-                displayOptions: {
-                    show: {
-                        resource: ['customer'],
-                        operation: ['listCustomers'],
-                    },
-                },
-            },
-            {
-                displayName: 'Custom Field Contains',
-                name: 'customFieldContains',
-                type: 'string',
-                default: '',
-                description: 'Only return customers whose custom field contains this value',
-                displayOptions: {
-                    show: {
-                        resource: ['customer'],
-                        operation: ['listCustomers'],
-                    },
-                },
-            },
-            {
                 displayName: 'Filters',
                 name: 'filters',
                 type: 'fixedCollection',
@@ -508,19 +482,35 @@ export class ZohoBilling implements INodeType {
                         name: 'filter',
                         values: [
                             {
-                                displayName: 'Filter By',
+                                displayName: 'Field Name',
                                 name: 'filterBy',
                                 type: 'options',
                                 options: [
-                                    { name: 'Status.All',           value: 'Status.All' },
-                                    { name: 'Status.Active',        value: 'Status.Active' },
-                                    { name: 'Status.Inactive',      value: 'Status.Inactive' },
-                                    { name: 'Status.NonSubscribers', value: 'Status.NonSubscribers' },
-                                    { name: 'Status.Invoiced',      value: 'Status.Invoiced' },
-                                    { name: 'Status.PaymentOptions',value: 'Status.PaymentOptions' },
+                                    { name: 'Contact Number Contains', value: 'contact_number_contains' },
+                                    { name: 'Email Contains',           value: 'email_contains' },
+                                    { name: 'Status = Active',          value: 'active' },
+                                    { name: 'Status = Inactive',        value: 'inactive' },
+                                    { name: 'Custom Field Contains',    value: 'custom_field' },
                                 ],
-                                default: 'Status.All',
-                                description: 'Filter customers by status',
+                                default: 'contact_number_contains',
+                                description: 'Field to filter customers by',
+                            },
+                            {
+                                displayName: 'Value',
+                                name: 'filterValue',
+                                type: 'string',
+                                default: '',
+                                description: 'Value to filter by',
+                            },
+                            {
+                                displayName: 'Custom Field ID',
+                                name: 'customFieldId',
+                                type: 'string',
+                                default: '',
+                                displayOptions: {
+                                    show: { filterBy: ['custom_field'] },
+                                },
+                                description: 'Custom field number to use for custom field filter',
                             },
                         ],
                     },
@@ -1052,22 +1042,25 @@ export class ZohoBilling implements INodeType {
                     qs.per_page = perPage;
                 }
 
-                // Apply any status filters first
+                // Apply any customer filters (contact number, email, status, custom field)
                 const filters = this.getNodeParameter('filters', i, { filter: [] }) as {
-                    filter?: Array<{ filterBy: string }>;
+                    filter?: Array<{ filterBy: string; filterValue: string; customFieldId?: string }>;
                 };
                 if (filters.filter) {
                     for (const f of filters.filter) {
-                        if (f.filterBy) {
-                            qs.filter_by = f.filterBy;
+                        if (!f.filterValue) {
+                            continue;
+                        }
+                        if (f.filterBy === 'custom_field') {
+                            if (f.customFieldId) {
+                                qs[`custom_field_${f.customFieldId}_contains`] = f.filterValue;
+                            }
+                        } else if (f.filterBy === 'active' || f.filterBy === 'inactive') {
+                            qs.status = f.filterBy;
+                        } else {
+                            qs[f.filterBy] = f.filterValue;
                         }
                     }
-                }
-
-                const customFieldId = this.getNodeParameter('customFieldId', i) as string;
-                const customFieldContains = this.getNodeParameter('customFieldContains', i) as string;
-                if (customFieldId && customFieldContains) {
-                    qs[`custom_field_${customFieldId}_contains`] = customFieldContains;
                 }
 
                 const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/customers`, {}, qs, orgId);
