@@ -490,6 +490,43 @@ export class ZohoBilling implements INodeType {
                 },
             },
             {
+                displayName: 'Filters',
+                name: 'filters',
+                type: 'fixedCollection',
+                default: { filter: [] },
+                typeOptions: { multipleValues: true },
+                placeholder: 'Add Filter',
+                displayOptions: {
+                    show: {
+                        resource: ['customer'],
+                        operation: ['listCustomers'],
+                    },
+                },
+                options: [
+                    {
+                        displayName: 'Filter',
+                        name: 'filter',
+                        values: [
+                            {
+                                displayName: 'Filter By',
+                                name: 'filterBy',
+                                type: 'options',
+                                options: [
+                                    { name: 'Status.All',           value: 'Status.All' },
+                                    { name: 'Status.Active',        value: 'Status.Active' },
+                                    { name: 'Status.Inactive',      value: 'Status.Inactive' },
+                                    { name: 'Status.NonSubscribers', value: 'Status.NonSubscribers' },
+                                    { name: 'Status.Invoiced',      value: 'Status.Invoiced' },
+                                    { name: 'Status.PaymentOptions',value: 'Status.PaymentOptions' },
+                                ],
+                                default: 'Status.All',
+                                description: 'Filter customers by status',
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
                 displayName: 'Page',
                 name: 'page',
                 type: 'number',
@@ -1013,6 +1050,18 @@ export class ZohoBilling implements INodeType {
                 }
                 if (perPage) {
                     qs.per_page = perPage;
+                }
+
+                // Apply any status filters first
+                const filters = this.getNodeParameter('filters', i, { filter: [] }) as {
+                    filter?: Array<{ filterBy: string }>;
+                };
+                if (filters.filter) {
+                    for (const f of filters.filter) {
+                        if (f.filterBy) {
+                            qs.filter_by = f.filterBy;
+                        }
+                    }
                 }
 
                 const customFieldId = this.getNodeParameter('customFieldId', i) as string;
