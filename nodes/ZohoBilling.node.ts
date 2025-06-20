@@ -485,13 +485,13 @@ export class ZohoBilling implements INodeType {
                                 displayName: 'Field Name',
                                 name: 'filterBy',
                                 type: 'options',
-                                options: [
-                                    { name: 'Contact Number Contains', value: 'contact_number_contains' },
-                                    { name: 'Email Contains',           value: 'email_contains' },
-                                    { name: 'Status = Active',          value: 'active' },
-                                    { name: 'Status = Inactive',        value: 'inactive' },
-                                    { name: 'Custom Field Contains',    value: 'custom_field' },
-                                ],
+                                    options: [
+                                        { name: 'Contact Number Contains', value: 'contact_number_contains' },
+                                        { name: 'Email Contains',           value: 'email_contains' },
+                                        { name: 'Status.Active',           value: 'Status.Active' },
+                                        { name: 'Status.Inactive',         value: 'Status.Inactive' },
+                                        { name: 'Custom Field Contains',    value: 'custom_field' },
+                                    ],
                                 default: 'contact_number_contains',
                                 description: 'Field to filter customers by',
                             },
@@ -1055,8 +1055,8 @@ export class ZohoBilling implements INodeType {
                             if (f.customFieldId) {
                                 qs[`custom_field_${f.customFieldId}_contains`] = f.filterValue;
                             }
-                        } else if (f.filterBy === 'active' || f.filterBy === 'inactive') {
-                            qs.status = f.filterBy;
+                        } else if (f.filterBy.startsWith('Status.')) {
+                            qs.filter_by = f.filterBy;
                         } else {
                             qs[f.filterBy] = f.filterValue;
                         }
