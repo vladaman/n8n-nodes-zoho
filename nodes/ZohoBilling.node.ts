@@ -296,39 +296,6 @@ export class ZohoBilling implements INodeType {
                 description: 'ID of the subscription',
             },
             {
-                displayName: 'Status Filter',
-                name: 'statusFilter',
-                type: 'fixedCollection',
-                default: { status: [] },
-                typeOptions: { multipleValues: true },
-                placeholder: 'Add Status',
-                displayOptions: {
-                    show: {
-                        resource: ['customer'],
-                        operation: ['listCustomers'],
-                    },
-                },
-                options: [
-                    {
-                        displayName: 'Status',
-                        name: 'status',
-                        values: [
-                            {
-                                displayName: 'Status',
-                                name: 'statusValue',
-                                type: 'options',
-                                options: [
-                                    { name: 'Active',   value: 'Status.Active' },
-                                    { name: 'Inactive', value: 'Status.Inactive' },
-                                ],
-                                default: 'Status.Active',
-                                description: 'Filter customers by active or inactive status',
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
                 displayName: 'Filters',
                 name: 'filters',
                 type: 'fixedCollection',
@@ -521,6 +488,7 @@ export class ZohoBilling implements INodeType {
                                     options: [
                                         { name: 'Contact Number Contains', value: 'contact_number_contains' },
                                         { name: 'Email Contains',           value: 'email_contains' },
+                                        { name: 'Status',                   value: 'status' },
                                         { name: 'Custom Field Contains',    value: 'custom_field' },
                                     ],
                                 default: 'contact_number_contains',
@@ -1073,11 +1041,6 @@ export class ZohoBilling implements INodeType {
                     qs.per_page = perPage;
                 }
 
-                // Apply status filters, if any
-                const statusFilter = this.getNodeParameter('statusFilter.status', i, []) as string[];
-                if (Array.isArray(statusFilter) && statusFilter.length) {
-                    qs.filter_by = statusFilter[0];
-                }
 
                 // Apply any customer filters (contact number, email, custom field)
                 const filters = this.getNodeParameter('filters', i, { filter: [] }) as {
