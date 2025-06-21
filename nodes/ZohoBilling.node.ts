@@ -1,6 +1,6 @@
 import {
-    type IExecuteFunctions,
     type IDataObject,
+    type IExecuteFunctions,
     type INodeExecutionData,
     type INodeType,
     type INodeTypeDescription,
