@@ -299,7 +299,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Filters',
                 name: 'filters',
                 type: 'fixedCollection',
-                default: { filter: [] },
+                default: {filter: []},
                 typeOptions: {
                     multipleValues: true,
                 },
@@ -314,68 +314,71 @@ export class ZohoBilling implements INodeType {
                     {
                         displayName: 'Filter',
                         name: 'filter',
-                            values: [
-                                {
-                                    displayName: 'Field Name',
-                                    name: 'filterBy',
-                                    type: 'options',
-                                    options: [
-                                        { name: 'Search Text',                  value: 'search_text' },
-                                        { name: 'Subscription Number Contains', value: 'subscription_number_contains' },
-                                        { name: 'Reference Contains',           value: 'reference_contains' },
-                                        { name: 'Subscription Status',          value: 'filter_by' },
-                                    ],
-                                    default: 'search_text',
-                                    description: 'Field to filter by',
-                                },
-                                {
-                                    displayName: 'Value',
-                                    name: 'filterValue',
-                                    type: 'string',
-                                    default: '',
-                                    description: 'Value to filter the selected field by',
-                                    displayOptions: {
-                                        show: {
-                                            filterBy: [
-                                                'search_text',
-                                                'subscription_number_contains',
-                                                'reference_contains',
-                                            ],
-                                        },
+                        values: [
+                            {
+                                displayName: 'Field Name',
+                                name: 'filterBy',
+                                type: 'options',
+                                options: [
+                                    {name: 'Search Text', value: 'search_text'},
+                                    {name: 'Subscription Number Contains', value: 'subscription_number_contains'},
+                                    {name: 'Reference Contains', value: 'reference_contains'},
+                                    {name: 'Subscription Status', value: 'filter_by'},
+                                ],
+                                default: 'search_text',
+                                description: 'Field to filter by',
+                            },
+                            {
+                                displayName: 'Value',
+                                name: 'filterValue',
+                                type: 'string',
+                                default: '',
+                                description: 'Value to filter the selected field by',
+                                displayOptions: {
+                                    show: {
+                                        filterBy: [
+                                            'search_text',
+                                            'subscription_number_contains',
+                                            'reference_contains',
+                                        ],
                                     },
                                 },
-                                {
-                                    displayName: 'Subscription Status',
-                                    name: 'filterValue',
-                                    type: 'options',
-                                    options: [
-                                        { name: 'All',                      value: 'SubscriptionStatus.All' },
-                                        { name: 'In Progress',              value: 'SubscriptionStatus.IN_PROGRESS' },
-                                        { name: 'Trial',                    value: 'SubscriptionStatus.TRIAL' },
-                                        { name: 'Future',                   value: 'SubscriptionStatus.FUTURE' },
-                                        { name: 'Live',                     value: 'SubscriptionStatus.LIVE' },
-                                        { name: 'Unpaid',                   value: 'SubscriptionStatus.UNPAID' },
-                                        { name: 'Past Due',                 value: 'SubscriptionStatus.PAST_DUE' },
-                                        { name: 'Non‑Renewing',             value: 'SubscriptionStatus.NON_RENEWING' },
-                                        { name: 'Cancelled',                value: 'SubscriptionStatus.CANCELLED' },
-                                        { name: 'Cancelled From Dunning',   value: 'SubscriptionStatus.CANCELLED_FROM_DUNNING' },
-                                        { name: 'Expired',                  value: 'SubscriptionStatus.EXPIRED' },
-                                        { name: 'Creation Failed',          value: 'SubscriptionStatus.CREATION_FAILED' },
-                                        { name: 'Trial Expired',            value: 'SubscriptionStatus.TRIAL_EXPIRED' },
-                                        { name: 'Cancelled This Month',     value: 'SubscriptionStatus.CANCELLED_THIS_MONTH' },
-                                        { name: 'Cancelled Last Month',     value: 'SubscriptionStatus.CANCELLED_LAST_MONTH' },
-                                        { name: 'Paused',                   value: 'SubscriptionStatus.PAUSED' },
-                                        { name: 'Having Unbilled',          value: 'SubscriptionStatus.HAVING_UNBILLED' },
-                                    ],
-                                    default: 'All',
-                                    description: 'Subscription status to filter by',
-                                    displayOptions: {
-                                        show: {
-                                            filterBy: ['filter_by'],
-                                        },
+                            },
+                            {
+                                displayName: 'Subscription Status',
+                                name: 'filterValue',
+                                type: 'options',
+                                options: [
+                                    {name: 'All', value: 'SubscriptionStatus.All'},
+                                    {name: 'In Progress', value: 'SubscriptionStatus.IN_PROGRESS'},
+                                    {name: 'Trial', value: 'SubscriptionStatus.TRIAL'},
+                                    {name: 'Future', value: 'SubscriptionStatus.FUTURE'},
+                                    {name: 'Live', value: 'SubscriptionStatus.LIVE'},
+                                    {name: 'Unpaid', value: 'SubscriptionStatus.UNPAID'},
+                                    {name: 'Past Due', value: 'SubscriptionStatus.PAST_DUE'},
+                                    {name: 'Non‑Renewing', value: 'SubscriptionStatus.NON_RENEWING'},
+                                    {name: 'Cancelled', value: 'SubscriptionStatus.CANCELLED'},
+                                    {
+                                        name: 'Cancelled From Dunning',
+                                        value: 'SubscriptionStatus.CANCELLED_FROM_DUNNING'
+                                    },
+                                    {name: 'Expired', value: 'SubscriptionStatus.EXPIRED'},
+                                    {name: 'Creation Failed', value: 'SubscriptionStatus.CREATION_FAILED'},
+                                    {name: 'Trial Expired', value: 'SubscriptionStatus.TRIAL_EXPIRED'},
+                                    {name: 'Cancelled This Month', value: 'SubscriptionStatus.CANCELLED_THIS_MONTH'},
+                                    {name: 'Cancelled Last Month', value: 'SubscriptionStatus.CANCELLED_LAST_MONTH'},
+                                    {name: 'Paused', value: 'SubscriptionStatus.PAUSED'},
+                                    {name: 'Having Unbilled', value: 'SubscriptionStatus.HAVING_UNBILLED'},
+                                ],
+                                default: 'SubscriptionStatus.All',
+                                description: 'Subscription status to filter by',
+                                displayOptions: {
+                                    show: {
+                                        filterBy: ['filter_by'],
                                     },
                                 },
-                            ],
+                            },
+                        ],
                     },
                 ],
             },
@@ -383,7 +386,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Page',
                 name: 'page',
                 type: 'number',
-                typeOptions: { minValue: 1 },
+                typeOptions: {minValue: 1},
                 default: 1,
                 description: 'Page number to retrieve',
                 displayOptions: {
@@ -397,7 +400,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Per Page',
                 name: 'perPage',
                 type: 'number',
-                typeOptions: { minValue: 1, maxValue: 200 },
+                typeOptions: {minValue: 1, maxValue: 200},
                 default: 200,
                 description: 'Number of records per page',
                 displayOptions: {
@@ -439,7 +442,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Page',
                 name: 'page',
                 type: 'number',
-                typeOptions: { minValue: 1 },
+                typeOptions: {minValue: 1},
                 default: 1,
                 description: 'Page number to retrieve',
                 displayOptions: {
@@ -453,7 +456,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Per Page',
                 name: 'perPage',
                 type: 'number',
-                typeOptions: { minValue: 1, maxValue: 200 },
+                typeOptions: {minValue: 1, maxValue: 200},
                 default: 200,
                 description: 'Number of records per page',
                 displayOptions: {
@@ -467,8 +470,8 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Filters',
                 name: 'filters',
                 type: 'fixedCollection',
-                default: { filter: [] },
-                typeOptions: { multipleValues: true },
+                default: {filter: []},
+                typeOptions: {multipleValues: true},
                 placeholder: 'Add Filter',
                 displayOptions: {
                     show: {
@@ -485,12 +488,12 @@ export class ZohoBilling implements INodeType {
                                 displayName: 'Field Name',
                                 name: 'filterBy',
                                 type: 'options',
-                                    options: [
-                                        { name: 'Contact Number Contains', value: 'contact_number_contains' },
-                                        { name: 'Email Contains',           value: 'email_contains' },
-                                        { name: 'Status',                   value: 'status' },
-                                        { name: 'Custom Field Contains',    value: 'custom_field' },
-                                    ],
+                                options: [
+                                    {name: 'Contact Number Contains', value: 'contact_number_contains'},
+                                    {name: 'Email Contains', value: 'email_contains'},
+                                    {name: 'Status', value: 'status'},
+                                    {name: 'Custom Field Contains', value: 'custom_field'},
+                                ],
                                 default: 'contact_number_contains',
                                 description: 'Field to filter customers by',
                             },
@@ -500,6 +503,25 @@ export class ZohoBilling implements INodeType {
                                 type: 'string',
                                 default: '',
                                 description: 'Value to filter by',
+                                displayOptions: {
+                                    show: {filterBy: ['contact_number_contains', 'email_contains', 'custom_field']},
+                                },
+                            },
+                            {
+                                displayName: 'Status',
+                                name: 'filterValue',
+                                type: 'options',
+                                options: [
+                                    {name: 'Active', value: 'active'},
+                                    {name: 'Inactive', value: 'inactive'},
+                                ],
+                                default: 'active',
+                                description: 'Customer status to filter by',
+                                displayOptions: {
+                                    show: {
+                                        filterBy: ['status'],
+                                    },
+                                },
                             },
                             {
                                 displayName: 'Custom Field ID',
@@ -507,7 +529,7 @@ export class ZohoBilling implements INodeType {
                                 type: 'string',
                                 default: '',
                                 displayOptions: {
-                                    show: { filterBy: ['custom_field'] },
+                                    show: {filterBy: ['custom_field']},
                                 },
                                 description: 'Custom field number to use for custom field filter',
                             },
@@ -519,7 +541,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Page',
                 name: 'page',
                 type: 'number',
-                typeOptions: { minValue: 1 },
+                typeOptions: {minValue: 1},
                 default: 1,
                 description: 'Page number to retrieve',
                 displayOptions: {
@@ -533,7 +555,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Per Page',
                 name: 'perPage',
                 type: 'number',
-                typeOptions: { minValue: 1, maxValue: 200 },
+                typeOptions: {minValue: 1, maxValue: 200},
                 default: 200,
                 description: 'Number of records per page',
                 displayOptions: {
@@ -547,7 +569,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Page',
                 name: 'page',
                 type: 'number',
-                typeOptions: { minValue: 1 },
+                typeOptions: {minValue: 1},
                 default: 1,
                 description: 'Page number to retrieve',
                 displayOptions: {
@@ -561,7 +583,7 @@ export class ZohoBilling implements INodeType {
                 displayName: 'Per Page',
                 name: 'perPage',
                 type: 'number',
-                typeOptions: { minValue: 1, maxValue: 200 },
+                typeOptions: {minValue: 1, maxValue: 200},
                 default: 200,
                 description: 'Number of records per page',
                 displayOptions: {
@@ -625,7 +647,11 @@ export class ZohoBilling implements INodeType {
                     },
                 },
                 options: [
-                    {name: 'Account ID', value: 'zcrm_account_id', description: 'For accounts only and Accounts and its contacts sync'},
+                    {
+                        name: 'Account ID',
+                        value: 'zcrm_account_id',
+                        description: 'For accounts only and Accounts and its contacts sync'
+                    },
                     {name: 'Contact ID', value: 'zcrm_contact_id', description: 'For Contacts only sync'},
                 ],
                 description: 'CRM reference ID of the customer',
@@ -907,10 +933,10 @@ export class ZohoBilling implements INodeType {
                 returnData.push({json: responseData as IDataObject});
             } else if (operation === 'listSubscriptions') {
                 // build optional filters and paging parameters
-                const filters = this.getNodeParameter('filters', i, { filter: [] }) as {
+                const filters = this.getNodeParameter('filters', i, {filter: []}) as {
                     filter?: Array<{ filterBy: string; filterValue: string }>;
                 };
-                const page    = this.getNodeParameter('page',    i) as number;
+                const page = this.getNodeParameter('page', i) as number;
                 const perPage = this.getNodeParameter('perPage', i) as number;
                 const qs: IDataObject = {};
                 if (filters.filter) {
@@ -934,7 +960,7 @@ export class ZohoBilling implements INodeType {
                     qs,
                     orgId,
                 );
-                returnData.push({ json: responseData as IDataObject });
+                returnData.push({json: responseData as IDataObject});
             } else if (operation === 'getSubscription') {
                 const subscriptionId = this.getNodeParameter('subscriptionId', i) as string;
                 const responseData = await zohoSubscriptionsApiRequest.call(this, 'GET', `${baseURL}/subscriptions/${subscriptionId}`, {}, {}, orgId);
@@ -1043,7 +1069,7 @@ export class ZohoBilling implements INodeType {
 
 
                 // Apply any customer filters (contact number, email, custom field)
-                const filters = this.getNodeParameter('filters', i, { filter: [] }) as {
+                const filters = this.getNodeParameter('filters', i, {filter: []}) as {
                     filter?: Array<{ filterBy: string; filterValue: string; customFieldId?: string }>;
                 };
                 if (filters.filter) {
